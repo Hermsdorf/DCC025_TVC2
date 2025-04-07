@@ -1,16 +1,16 @@
 package src;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Farmacia implements Setor {
+public class Farmacia extends Setor {
     Farmacia() {
+        this.estoque = new Estoque();
+        this.carregarDados(); // Carrega os produtos do arquivo CSV
         
-    }
-
-    @Override
-    public int getId()
-    {
-        return 1; 
     }
 
     Setor retornaSetor()
@@ -20,31 +20,78 @@ public class Farmacia implements Setor {
 
     
     // Atributos
-    Estoque estoque;
-    private static final String PRODUTOS_CSV = "data/produtos.csv";
-    private static final String FORNECEDORES_CSV = "data/fornecedores.csv";
-    @Override
-    public void entradaProduto(Produto produto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'entradaProduto'");
+    private static final String PRODUTOS_CSV = "data/Farmacia/produtos.csv";
+
+    private Estoque estoque;
+    public void entradaProduto(Produto produto) 
+    {
+        this.estoque.adicionarProduto(produto);
+        System.out.println("Produto adicionado ao estoque da farmacia.");
+
+        salvarDados(); // Salva os produtos no arquivo CSV
+        
     }
 
     @Override
-    public void saidaProduto(Produto produto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saidaProduto'");
-    }
+    public void saidaProduto(Produto produto) {}
+
+    public void saidaProduto(int id,int qtd, Setor setor){}
 
     @Override
-    public void salvarDados() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'salvarDados'");
+    public void salvarDados() 
+    {
+        this.salvarProdutos();      
     }
 
+    public void salvarProdutos()
+    {
+        try {
+            List<String> linhas = new ArrayList<>();
+            linhas.add("ID,Qtd,Nome,ID_fornecedor"); // Cabeçalho
+            for (Produto produto : this.estoque.listarProdutos()) {
+                String linha = produto.getId() + "," + produto.getQtd() + "," + produto.getNome() + ","
+                        + produto.getFornecedor_id();
+                linhas.add(linha);
+            }
+            Files.write(Paths.get(PRODUTOS_CSV), linhas);
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar produtos: " + e.getMessage());
+        }
+    }
+        
+    
+
     @Override
-    public void carregarDados() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'carregarDados'");
+    public void carregarDados()
+    {
+        this.carregarProdutos();        
+    }
+
+    public void carregarProdutos()
+    {
+        System.out.println("    Carregando produtos...");
+        try {
+            List<String> linhas = Files.readAllLines(Paths.get(PRODUTOS_CSV));
+            for (String linha : linhas.subList(1, linhas.size())) { // Ignora o cabeçalho
+                String[] partes = linha.split(",");
+                Produto produto = new Produto(partes[2]);
+                produto.setId(Integer.parseInt(partes[0]));
+                produto.setQtd(Integer.parseInt(partes[1]));
+                produto.setFornecedor_id(Integer.parseInt(partes[3]));
+                estoque.adicionarProduto(produto);
+            }
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar produtos: " + e.getMessage());
+        }
+        System.out.println("    Produtos carregados com sucesso!");
+    }
+
+    public void listarEstoque()
+    {
+        System.out.println("Estoque da Farmacia:");
+        for (Produto produto : this.estoque.listarProdutos()) {
+            System.out.println("ID: " + produto.getId() + ", Nome: " + produto.getNome() + ", Qtd: " + produto.getQtd());
+        }
     }
     
 }

@@ -13,7 +13,18 @@ public class Estoque {
 
     // Métodos
     public void adicionarProduto(Produto produto) {
-        produtos.add(produto);
+
+        if(this.verificaProduto(produto.getId()))
+        {
+            //System.out.println("Produto já existe no estoque. Atualizando quantidade.");
+            int quantidadeAtual = produtos.get(produto.getId() - 1).getQtd();
+            produtos.get(produto.getId() - 1).setQtd(quantidadeAtual + produto.getQtd());
+        }
+        else
+        {
+            produtos.add(produto);
+            //System.out.println("Produto adicionado ao estoque.");
+        }
     }
 
     public void removerProduto(Produto produto) {

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Almoxarifado implements Setor {
+public class Almoxarifado extends Setor {
     Almoxarifado() {
 
         this.estoque = new Estoque();
@@ -16,17 +16,20 @@ public class Almoxarifado implements Setor {
         this.carregarDados(); // Carrega os dados do arquivo CSV ao iniciar o sistema
     }
 
-    @Override
-    public int getId()
-    {
-        return 0; // ID do Almoxarifado é 0, pois não é um setor específico
-    }
+ 
 
     // Atributos
-    Estoque estoque;
-    List<Fornecedor> fornecedores;
-    private static final String PRODUTOS_CSV = "data/produtos.csv";
-    private static final String FORNECEDORES_CSV = "data/fornecedores.csv";
+    private Estoque estoque;
+    private List<Fornecedor> fornecedores;
+    
+    public static final int FARMACIA = 1;  
+    public static final int CENTRO_CIRURGICO = 2;
+    public static final int NUTRICAO = 3;
+
+    private static final String PRODUTOS_CSV = "data/Almoxarifado/produtos.csv";
+    private static final String FORNECEDORES_CSV = "data/Almoxarifado/fornecedores.csv";
+
+    private static int ID = 0;
 
     public void entradaProduto(Produto produto, Fornecedor fornecedor) {
 
@@ -47,18 +50,18 @@ public class Almoxarifado implements Setor {
             produto.setFornecedor(fornecedor);
         }
 
-        if(estoque.verificaProduto(produto.getId()))
+        if(produto.getId() > ID)
         {
-            estoque.produtos.get(produto.getId() - 1).setQtd(estoque.produtos.get(produto.getId() - 1).getQtd() + produto.getQtd());
-            System.out.println("Produto já existe no estoque. Atualizando quantidade.");
+            ID = produto.getId();
         }
-        else
+        if(produto.getId() == 0)
         {
-            estoque.adicionarProduto(produto);
-            System.out.println("Produto adicionado ao estoque.");
+            produto.setId(++ID);
         }
 
-
+        
+        this.estoque.adicionarProduto(produto);
+        System.out.println("Produto adicionado ao estoque do Almoxarifado.");
         salvarDados(); // Salva os produtos no arquivo CSV
 
     }
@@ -75,11 +78,16 @@ public class Almoxarifado implements Setor {
 
     }
 
-    public void saidaProduto(int id,int qtd, Setor setor)
+    public void saidaProduto(Produto produto, int qtd, Setor setor)
     {
-        if(estoque.verificaProduto(id))
+        if(estoque.verificaProduto(produto.getId()))
         {
-            estoque.retiradaProduto(id, qtd);
+            estoque.retiradaProduto(produto.getId(), qtd);
+            Produto produtoRetirado = new Produto(produto.getNome());
+            produtoRetirado.setId(produto.getId());
+            produtoRetirado.setQtd(qtd);
+            produtoRetirado.setFornecedor_id(produto.getFornecedor_id());
+            setor.entradaProduto(produtoRetirado);
             System.out.println("Produto retirado do estoque.");
         }
         else
@@ -109,7 +117,16 @@ public class Almoxarifado implements Setor {
         }
     }
 
-    public void cadastrarFornecedor() {
+    Produto getProduto(int id) {
+        for (Produto produto : estoque.listarProdutos()) {
+            if (produto.getId() == id) {
+                return produto;
+            }
+        }
+        return null;
+    }
+
+    public int cadastrarFornecedor() {
         Fornecedor fornecedor = new Fornecedor();
         Scanner scanner = new Scanner(System.in);
         String teclado;
@@ -131,6 +148,8 @@ public class Almoxarifado implements Setor {
         System.out.println("Fornecedor cadastrado com sucesso!");
         System.out.println(fornecedor.toString());
         salvarFornecedores();
+
+        return fornecedor.getId();
 
     }
 
@@ -178,7 +197,8 @@ public class Almoxarifado implements Setor {
         }
     }
 
-    private void carregarProdutos() {
+    private void carregarProdutos() 
+    {
         System.out.println("    Carregando produtos...");
         try {
             List<String> linhas = Files.readAllLines(Paths.get(PRODUTOS_CSV));
@@ -189,6 +209,9 @@ public class Almoxarifado implements Setor {
                 produto.setQtd(Integer.parseInt(partes[1]));
                 produto.setFornecedor_id(Integer.parseInt(partes[3]));
                 estoque.adicionarProduto(produto);
+                if (produto.getId() > ID) {
+                    ID = produto.getId();
+                }
             }
         } catch (IOException e) {
             System.err.println("Erro ao carregar produtos: " + e.getMessage());
@@ -248,9 +271,12 @@ public class Almoxarifado implements Setor {
     }
 
 	public void listaSetores() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'listaSetores'");
-	}
+		System.out.println("Setores disponíveis:");
+        System.out.println("1 - Farmácia");
+        System.out.println("2 - Centro Cirúrgico");
+        System.out.println("3 - Nutrição");
+        System.out.println("4 - Almoxarifado");
+    }
 
     // Salva dados no JSON (versão simplificada)
 

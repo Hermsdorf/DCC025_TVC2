@@ -3,6 +3,11 @@ package src;
 import java.util.Scanner;
 
 public class main {
+
+    public static final int FARMACIA = 1;  
+    public static final int CENTRO_CIRURGICO = 2;
+    public static final int NUTRICAO = 3;
+    public static final int ALMOXARIFADO = 4;
     public static void main(String[] args) {
 
         // Limpa o console
@@ -10,14 +15,15 @@ public class main {
 
         System.out.print("\n");
         System.out.print("Inicializando Farmacia...");
+        System.out.print("\n");
         Farmacia farmacia = new Farmacia();
         System.out.println("Inicializando Sistema Almoxarifado...");
         Almoxarifado almoxarifado = new Almoxarifado();
         System.out.print("\n");
 
-        almoxarifado.listarEstoque();
+        //almoxarifado.listarEstoque();
 
-        System.out.print("\n");
+        //System.out.print("\n");
         Scanner scanner = new Scanner(System.in);
         int opcao;
         boolean sair = true;
@@ -44,7 +50,7 @@ public class main {
                     System.out.print("Digite o nome do produto: ");
                     String nomeProduto = scanner.nextLine();
                     Produto produto = new Produto(nomeProduto);
-                    produto.setId(almoxarifado.estoque.produtos.size() + 1); // Atribui um ID único ao produto
+                    produto.setId(0); // Atribui um ID único ao produto
 
                     System.out.println("Selecione um dos fornecedores cadastrados! ");
                     // Listando fornecedores cadastrados
@@ -55,8 +61,7 @@ public class main {
                     int idFornecedor = scanner.nextInt();
                     scanner.nextLine(); // Limpa o buffer do scanner
                     if (idFornecedor == 0) {
-                        almoxarifado.cadastrarFornecedor();
-                        idFornecedor = almoxarifado.fornecedores.getLast().getId(); // Último fornecedor cadastrado
+                        idFornecedor = almoxarifado.cadastrarFornecedor();
                     }
                     produto.setFornecedor_id(idFornecedor);
 
@@ -85,7 +90,33 @@ public class main {
                 case 3:
                     clearConsole();
                     System.out.print("\n");
-                    almoxarifado.listarEstoque();
+                    System.out.println("Selecione o setor desejado:");
+                    almoxarifado.listaSetores();
+                    System.out.print("Digite o ID do setor: ");
+                    int idSetor_estoque = scanner.nextInt();
+                    scanner.nextLine(); // Limpa o buffer do scanner
+                    if (idSetor_estoque == FARMACIA) {
+                        clearConsole();
+                        System.out.print("\n");
+                        farmacia.listarEstoque();
+                    } else if (idSetor_estoque == CENTRO_CIRURGICO) {
+                        clearConsole();
+                        System.out.print("\n");
+                        System.out.println("Centro Cirúrgico não implementado.");
+                    } else if (idSetor_estoque == NUTRICAO) {
+                        clearConsole();
+                        System.out.print("\n");
+                        System.out.println("Nutrição não implementado.");
+                    }else if (idSetor_estoque == ALMOXARIFADO) {
+                        clearConsole();
+                        System.out.print("\n");
+                        almoxarifado.listarEstoque();
+                    } else {
+                        clearConsole();
+                        System.out.print("\n");
+                        System.out.println("Setor inválido.");
+                    }
+                    System.out.print("\n");
                     break;
                 case 4:
                     clearConsole();
@@ -99,19 +130,22 @@ public class main {
                     int idProduto = scanner.nextInt();
                     scanner.nextLine(); // Limpa o buffer do scanner
                     
+                    Produto produtoRetirado = almoxarifado.getProduto(idProduto);
+
                     System.out.print("Digite a quantidade a ser retirada: ");
                     int quantidadeRetirada = scanner.nextInt();
                     scanner.nextLine(); // Limpa o buffer do scanner
 
                     System.out.println("Qual setor deseja retirar o produto?");
-                    System.out.println("1 - Farmacia");
-                    int setor = scanner.nextInt();
+                    almoxarifado.listaSetores();
+
+                    System.out.print("Digite o ID do setor: ");
+                    int idSetor = scanner.nextInt();
                     scanner.nextLine(); // Limpa o buffer do scanner
-                    if(setor == 1) {
-                        almoxarifado.saidaProduto(idProduto,quantidadeRetirada, farmacia.retornaSetor());
-                        System.out.println("Produto retirado pela Farmacia!");
-                    } else {
-                        System.out.println("Setor inválido!");
+                    if(idSetor == FARMACIA)
+                    {
+                        almoxarifado.saidaProduto(produtoRetirado, quantidadeRetirada, farmacia);
+                        farmacia.listarEstoque();
                     }
                     clearConsole();
                     System.out.print("\n");
