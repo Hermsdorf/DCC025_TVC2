@@ -281,6 +281,5 @@ public class Almoxarifado extends Setor {
         System.out.println("4 - Almoxarifado");
     }
 
-    // Salva dados no JSON (versão simplificada)
 
 }
