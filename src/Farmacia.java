@@ -9,8 +9,9 @@ import java.util.List;
 public class Farmacia extends Setor {
     Farmacia() {
         this.estoque = new Estoque();
+        System.out.println("Carregando Base de dados");
         this.carregarDados(); // Carrega os produtos do arquivo CSV
-        
+        System.out.println("Base de dados carregada com sucesso!");        
     }
 
     Setor retornaSetor()
@@ -20,7 +21,7 @@ public class Farmacia extends Setor {
 
     
     // Atributos
-    private static final String PRODUTOS_CSV = "data/Farmacia/produtos.csv";
+    private static final String PRODUTOS_CSV = "./data/Farmacia/produtos.csv";
 
     private Estoque estoque;
     public void entradaProduto(Produto produto) 

@@ -13,13 +13,13 @@ public class main {
         // Limpa o console
         clearConsole();
 
-        System.out.print("\n");
+        System.out.print('\n');
         System.out.print("Inicializando Farmacia...");
-        System.out.print("\n");
+        System.out.print('\n');
         Farmacia farmacia = new Farmacia();
-        System.out.println("Inicializando Sistema Almoxarifado...");
+        System.out.println("Inicializando Almoxarifado...");
         Almoxarifado almoxarifado = new Almoxarifado();
-        System.out.print("\n");
+        System.out.print('\n');
 
         //almoxarifado.listarEstoque();
 
@@ -145,11 +145,24 @@ public class main {
                     if(idSetor == FARMACIA)
                     {
                         almoxarifado.saidaProduto(produtoRetirado, quantidadeRetirada, farmacia);
+                        clearConsole();
+                        System.out.print("\n");
                         farmacia.listarEstoque();
                     }
-                    clearConsole();
+                    else if(idSetor == CENTRO_CIRURGICO)
+                    {
+                        System.out.println("Centro Cirúrgico não implementado.");
+                    }
+                    else if(idSetor == NUTRICAO)
+                    {
+                        System.out.println("Nutrição não implementado.");
+                    }
+                    else
+                    {
+                        System.out.println("Setor inválido.");
+                    }
+                    
                     System.out.print("\n");
-                    almoxarifado.listarEstoque();
                     break;
 
                 case 0:

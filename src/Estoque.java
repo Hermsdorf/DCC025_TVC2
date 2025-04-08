@@ -12,19 +12,18 @@ public class Estoque {
     List<Produto> produtos = new ArrayList<Produto>();
 
     // Métodos
-    public void adicionarProduto(Produto produto) {
+    public void adicionarProduto(Produto produto_entrada) {
 
-        if(this.verificaProduto(produto.getId()))
+        for (Produto produto : produtos) 
         {
-            //System.out.println("Produto já existe no estoque. Atualizando quantidade.");
-            int quantidadeAtual = produtos.get(produto.getId() - 1).getQtd();
-            produtos.get(produto.getId() - 1).setQtd(quantidadeAtual + produto.getQtd());
+            if (produto.getId() == produto_entrada.getId()) {
+                produto.setQtd(produto.getQtd() + produto_entrada.getQtd());
+                return;
+            }
         }
-        else
-        {
-            produtos.add(produto);
-            //System.out.println("Produto adicionado ao estoque.");
-        }
+
+        produtos.add(produto_entrada);
+
     }
 
     public void removerProduto(Produto produto) {
@@ -41,14 +40,11 @@ public class Estoque {
     }
 
     public void retiradaProduto(int produto_id, int quantidade) {
-        if (quantidade <= 0 || quantidade > produtos.get(produto_id-1).getQtd())
-        {
+        if (quantidade <= 0 || quantidade > produtos.get(produto_id - 1).getQtd()) {
             System.out.println("Quantidade inválida para retirada.");
-        } 
-        else 
-        {
-            int quantidadeAtual = produtos.get(produto_id-1).getQtd();
-            produtos.get(produto_id-1).setQtd(quantidadeAtual - quantidade);
+        } else {
+            int quantidadeAtual = produtos.get(produto_id - 1).getQtd();
+            produtos.get(produto_id - 1).setQtd(quantidadeAtual - quantidade);
 
         }
     }

@@ -13,7 +13,9 @@ public class Almoxarifado extends Setor {
 
         this.estoque = new Estoque();
         this.fornecedores = new ArrayList<>();
+        System.out.println("Carregando Base de dados...");
         this.carregarDados(); // Carrega os dados do arquivo CSV ao iniciar o sistema
+        System.out.println("Base de dados carregada com sucesso!");
     }
 
  
@@ -26,8 +28,10 @@ public class Almoxarifado extends Setor {
     public static final int CENTRO_CIRURGICO = 2;
     public static final int NUTRICAO = 3;
 
-    private static final String PRODUTOS_CSV = "data/Almoxarifado/produtos.csv";
-    private static final String FORNECEDORES_CSV = "data/Almoxarifado/fornecedores.csv";
+
+    private static final String PRODUTOS_CSV = "./data/Almoxarifado/produtos.csv";
+    private static final String FORNECEDORES_CSV = "./data/Almoxarifado/fornecedores.csv";
+
 
     private static int ID = 0;
 
@@ -87,6 +91,7 @@ public class Almoxarifado extends Setor {
             produtoRetirado.setId(produto.getId());
             produtoRetirado.setQtd(qtd);
             produtoRetirado.setFornecedor_id(produto.getFornecedor_id());
+            System.out.println("DEBUG");
             setor.entradaProduto(produtoRetirado);
             System.out.println("Produto retirado do estoque.");
         }
@@ -264,10 +269,8 @@ public class Almoxarifado extends Setor {
 
     @Override
     public void carregarDados() {
-        System.out.println("Carregando dados base de dados...");
         carregarProdutos();
         carregarFornecedores();
-        System.out.println("Base de dados carregada com sucesso!");
     }
 
 	public void listaSetores() {
